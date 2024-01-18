@@ -1,28 +1,168 @@
 #include <iostream>
 #include <Windows.h>
-
+#include <vector>
+#include <conio.h>
 using namespace std;
+
+
+
+// ================= Data =================
+const int HIGH = 15;
+const int WIDTH = 30;
+char Display[HIGH][WIDTH];
+int fps = 60;
+int latency = 1000 / 60;
+// ========================================
 
 
 class Point
 {
+public:
     int x;
     int y;
     char icon;
-    Point() : x{ 30 }, y{ 30 }, icon{ '.' } {}
-    Point(int X, int Y, char Icon) : x{ X }, y{ Y }, icon{ Icon } {}
+    Point() : x{ 1 }, y{ 1 }, icon{ '.' } {}
+    Point(int X, int Y, const char Icon) : x{ X }, y{ Y }, icon{ Icon } {}
 };
 
-const int HIGH = 20;
-const int WIDTH = 20;
-int fps = 60;
-int latency = 1000 / 60;
+
+// ====== Класс сущностей ======
+class Entity : public Point, public Inventory
+{
+private:
+    float health;
+    float armor;
+    unsigned short level;
+    int speed;
+    Point coord;
+    Inventory bag;
+public:
+    Entity() : health{ 0.0 }, armor{ 0.0 }, level{ 1 }, speed{ 0 }, coord{ -1, -1, '.' }, bag{} {}
+    Entity(float hp, float Armor, unsigned short lvl, int Speed, int X, int Y, char Icon, vector<char> Bag) : health{ hp }, armor{ Armor }, level{ lvl }, speed{ Speed }, coord{ X, Y, Icon }, bag{ Bag } {}
+    explicit Entity(Point exp) : health{ 0.0 }, armor{ 0.0 }, level{ 1 }, speed{ 0 }, coord{ exp } {}
+
+
+    Point move()
+    {
+        char go = _getch();
+        switch (go)
+        {
+        case 'w':
+            coord.y -= 1;
+            break;
+        case 'a':
+            coord.x -= 1;
+            break;
+        case 'd':
+            coord.x += 1;
+            break;
+        case 's':
+            coord.y += 1;
+            break;
+        case 'e':
+            push_pull();
+            break;
+        }
+        return coord;
+    }
+    void back()
+    {
+        if (coord.x <= 0)
+            coord.x = 0;
+        if (coord.x >= WIDTH)
+            coord.x = WIDTH;
+        if (coord.y <= 0)
+            coord.y = 0;
+        if (coord.y >= HIGH)
+            coord.y = HIGH;
+    }
+    void push_pull()
+    {
+        char flag = _getch();
+        if (flag == 'e')
+        {
+            vector <char> ptr;
+            if (coord.y > 0 && coord.y < WIDTH)
+                if (coord.x > 0 && coord.x + 1 < HIGH)
+                    ptr.push_back(Display[coord.y][coord.x + 1]);
+            for (int i = 0; i < ptr.size(); i++)
+            {
+                switch (ptr[i])
+                {
+                case '.':
+                    bag.push_back(ptr[i]);
+                    Display[coord.y][coord.x + 1] = ' ';
+                }
+            }
+        }
+        
+    }
+    virtual int collision_handler();
+    void hit()
+    {
+        /* Null */
+    }
+   
+
+
+    
+};
+// ====== Инвентарь ======
+class Inventory
+{
+    vector <char> inv{};
+    Inventory() : inv{ } {}
+    Inventory(vector <char> I) : inv{ I } {}
+    void del()
+    {
+        /* NULL */
+    }
+};
+vector <Point> pointArr{};
+
+
+
+
 
 int main()
 {
+
+#pragma region Setting
     srand(time(NULL));
     Sleep(1000);
     system("cls");
-    char Display[HIGH][WIDTH];
-    Point hero{ 2, 2, 'i' };
+    int _getch();
+#pragma endregion
+
+    Point hero{ 1, 1, 'i' };
+    pointArr.push_back(hero);
+    int f_main = true;
+    while (f_main == true)
+    {
+        for (int i = 0; i < HIGH; i++)
+            for (int j = 0; j < WIDTH; j++)
+                Display[i][j] = '.';
+
+
+        for (int i = 0; i < pointArr.size(); i++)
+            Display[pointArr[i].y][pointArr[i].x] = pointArr[i].icon;
+
+
+        for (int i = 0; i < HIGH; i++)
+        {
+            for (int j = 0; j < WIDTH; j++)
+                cout << Display[i][j];
+            cout << endl;
+        }
+
+        Sleep(latency);
+        for (int i = 0; i < pointArr.size(); i++)
+        {
+            char go = _getch();
+            move(pointArr[i], go);
+            back(pointArr[i]);
+        }
+        system("cls");
+    }
+
 }
