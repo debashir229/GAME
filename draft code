@@ -1,0 +1,28 @@
+#include <iostream>
+#include <Windows.h>
+
+using namespace std;
+
+
+class Point
+{
+    int x;
+    int y;
+    char icon;
+    Point() : x{ 30 }, y{ 30 }, icon{ '.' } {}
+    Point(int X, int Y, char Icon) : x{ X }, y{ Y }, icon{ Icon } {}
+};
+
+const int HIGH = 20;
+const int WIDTH = 20;
+int fps = 60;
+int latency = 1000 / 60;
+
+int main()
+{
+    srand(time(NULL));
+    Sleep(1000);
+    system("cls");
+    char Display[HIGH][WIDTH];
+    Point hero{ 2, 2, 'i' };
+}
