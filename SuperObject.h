@@ -1,28 +1,37 @@
 #pragma once
 #include "Point.h"
+class Point;
 class SuperObject
 {
     Point* place;
 public:
     char icon;
-    int speed;
-    int direct;
+    int speed{ 1 }; // квантификатор скорости
+    bool is_move{ false }; // движется объект или нет
+    int direct{ 0 };
+
     // direct
     //    1
-    // 2     3
+    // 2  0  3
     //    4
-    SuperObject() : place{ nullptr }, speed{ 0 }, direct{ 0 }, icon{ emptyChar } {}
-    SuperObject(Point* placeP, int speedP = 0, int directP = 0, char iconP = emptyChar) : speed{ speedP }, direct{ directP }, icon{ iconP } { link(placeP); }
 
-    virtual Coord& getCoord()
+    SuperObject() :
+        place{ nullptr }, icon{ emptyChar } {}
+    SuperObject(Point* placeP, char iconP = emptyChar, int speedP = 1, bool ismovP = false, int directP = 0) :
+        speed{ speedP }, direct{ directP }, is_move{ ismovP }, icon{ iconP } 
     {
-        return place->coord;
+        link(placeP);
+    }
+
+    virtual Coord* getCoord()
+    {
+        return &place->coord;
     }
     virtual void link(Point* p)
     {
         p->into = nullptr;
-        place = p;
         p->into = this;
+        place = p;
     }
     virtual int collision_hanlder(SuperObject* obj)
     {
@@ -30,7 +39,7 @@ public:
     };
     virtual Coord move()
     {
-        Coord tcoord(place->coord);
+        Coord tcoord( place->coord );
         switch (direct)
         {
         case 1:
