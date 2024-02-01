@@ -2,15 +2,17 @@
 
 #include "Point.h"
 #include "SuperObject.h"
+#include <vector>
 using namespace std;
 
 class Entity : public SuperObject
 {
 public:
     int life = 1;
-
+    //vector <SuperObject> inventory{ };
     Entity() : SuperObject() {}
-    Entity(Point* placeP, char iconP, int lifeP, int speedP = 0, int directP = 0) : SuperObject(placeP, speedP, directP, iconP), life{ lifeP } {}
+    Entity(Point* placeP, char iconP, int lifeP) :
+        SuperObject(placeP, iconP), life{ lifeP } {}
     virtual int collision_hanlder(SuperObject* obj)
     {
         if (typeid(obj) == typeid(Entity)) //EXAMPLE
@@ -18,6 +20,10 @@ public:
             obj = dynamic_cast<Entity*>(obj);
             life = 0;
         }
+        //else if (typeid(obj) == typeid(Item))
+        //{
+        //    inventory.push_back(&Item);
+        //    
+        //}
         return 1;
     }
-};
