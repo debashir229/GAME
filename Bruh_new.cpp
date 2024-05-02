@@ -91,20 +91,20 @@ int main()
                 break;
             case 'a':
                 player.is_move = true;
-                player.direct = 4;
-                break;
-            case 'd':
-                player.is_move = true;
                 player.direct = 2;
                 break;
             case 's':
                 player.is_move = true;
                 player.direct = 3;
                 break;
+            case 'd':
+                player.is_move = true;
+                player.direct = 4;
+                break;
             case ' ':
                 break;
             case 27:
-                main_flag = false;  //exit
+                main_flag = false;  // exit
                 break;
             }
         // environment motor
@@ -116,8 +116,6 @@ int main()
             enemy.is_move = true;
             enemy.direct = ++counter;
             (counter > 3) ? counter = 0 : counter;
-
-
             enemy1.steps(&display[player.getCoord()->y][player.getCoord()->x]);
 
         // ---------STEP 2: processing---------
