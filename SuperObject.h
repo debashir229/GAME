@@ -12,8 +12,8 @@ public:
 
     // direct
     //    1
-    // 2  0  3
-    //    4
+    // 4  0  2
+    //    3
 
     SuperObject() :
         place{ nullptr }, icon{ emptyChar } {}
@@ -29,9 +29,11 @@ public:
     }
     virtual void link(Point* p)
     {
-        p->into = nullptr;
-        p->into = this;
-        place = p;
+        if(p->into)
+        {   p->into = nullptr;
+            p->into = this;
+            place = p;
+        }
     }
     virtual int collision_hanlder(SuperObject* obj)
     {
@@ -46,13 +48,13 @@ public:
             tcoord.y -= speed;
             break;
         case 2:
-            tcoord.x -= speed;
-            break;
-        case 3:
             tcoord.x += speed;
             break;
-        case 4:
+        case 3:
             tcoord.y += speed;
+            break;
+        case 4:
+            tcoord.x -= speed;
             break;
         }
         return tcoord;
